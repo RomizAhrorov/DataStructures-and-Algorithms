@@ -1,13 +1,19 @@
 package ArrayADT;
 
-public class Array<T> {
+public class Array<T extends Comparable<T>> {
     private T[] array;
-    private int size;
+    private final int size;
     private int length;
+
+    private void swap(int index1, int index2) {
+        T temp = this.array[index1];
+        this.array[index1] = this.array[index2];
+        this.array[index2] = temp;
+    }
 
     public Array() {
         this.size = 100;
-        this.array = (T[]) new Object[this.size];
+        this.array = (T[]) new Comparable[this.size];
         this.length = 0;
     }
 
@@ -16,7 +22,7 @@ public class Array<T> {
             throw new IllegalArgumentException("Initial capacity cannot be negative: " + size);
 
         this.size = size;
-        this.array = (T[]) new Object[this.size];
+        this.array = (T[]) new Comparable[this.size];
         this.length = 0;
     }
 
@@ -74,10 +80,10 @@ public class Array<T> {
 
         while (low <= high) {
             mid = (low + high) / 2;
-            comparison = ((Comparable<T>) this.array[mid]).compareTo(searchedValue);
+            comparison = searchedValue.compareTo(this.array[mid]);
             if(comparison == 0)
                 return mid;
-            else if (comparison < 0)
+            else if (comparison > 0)
                 low = mid + 1;
             else
                 high = mid - 1;
@@ -97,4 +103,37 @@ public class Array<T> {
             throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for length " + this.length);
         this.array[index] = updatedValue;
     }
+
+    public T max() {
+        T maxValue = this.array[0];
+        int comparison;
+        for(int i = 0; i < this.length; i++) {
+            comparison = this.array[i].compareTo(maxValue);
+            if(comparison > 0)
+                maxValue = this.array[i];
+        }
+
+        return maxValue;
+    }
+
+    public T min() {
+        T minValue = this.array[0];
+        int comparison;
+        for(int i = 0; i < this.length; i++) {
+            comparison = this.array[i].compareTo(minValue);
+            if(comparison < 0)
+                minValue = this.array[i];
+        }
+
+        return minValue;
+    }
+
+    public void reverse() {
+        int i = 0, j = this.length - 1;
+        while(i < j) {
+            swap(i++, j--);
+        }
+    }
+
+
 }
