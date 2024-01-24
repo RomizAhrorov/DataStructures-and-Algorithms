@@ -1,7 +1,5 @@
 package ArrayADT;
 
-import java.awt.*;
-
 public class Array {
     private int[] array;
     private final int size;
@@ -195,18 +193,13 @@ public class Array {
         return this.length == 0;
     }
 
-    public boolean isSorted() {
-        if(this.isEmpty() || this.length == 1) {
+    public static boolean isSorted(int[] array, int length) {
+        if(length == 0 || length == 1) {
             return true;
         }
 
-        boolean isAscending = this.array[0] < this.array[1];
-
-        for(int i = 0; i < this.length - 1; i++) {
-            if(isAscending && this.array[i] > this.array[i+1]) {
-                return false;
-            }
-            if(!isAscending && this.array[i] < this.array[i+1]) {
+        for(int i = 0; i < length - 1; i++) {
+            if(array[i] > array[i+1]) {
                 return false;
             }
         }
@@ -220,5 +213,60 @@ public class Array {
 
         if (length >= 0) System.arraycopy(arr, 0, this.array, this.length, length);
         this.length += length;
+    }
+
+    public void merge(int[] arr, int length) {
+        if(!(Array.isSorted(this.array, this.length) && Array.isSorted(arr, length))) {
+            System.err.println("Merging is impossible because arrays are not sorted");
+            System.exit(1);
+        }
+
+        if(this.length + length > this.size)
+            throw new IllegalArgumentException("There is no enough space in the array to merge given array.");
+
+        int[] temp = new int[this.length + length];
+        int i = 0, j = 0, k = 0;
+        while(i < this.length && j < length) {
+            if(this.array[i] < arr[j])
+                temp[k++] = this.array[i++];
+            else
+                temp[k++] = arr[j++];
+        }
+        for(; i < this.length; i++)
+            temp[k++] = this.array[i];
+        for(; j < length; j++)
+            temp[k++] = arr[j];
+
+        for(i = 0; i < this.length + length; i++) {
+            this.array[i] = temp[i];
+        }
+        this.length += length;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    public int[] getArray() {
+        return this.array;
+    }
+
+    public void findDuplicates() {
+        boolean duplicateFound;
+        for(int i = 0; i < this.length; i++) {
+            if(this.array[i] == -1) continue;
+
+            System.out.printf("\nChecking %d number from index %d...\n", this.array[i], i);
+            duplicateFound = false;
+            for(int j = i+1; j < this.length; j++) {
+                if(this.array[i] == this.array[j]) {
+                    System.out.printf("Duplicate is found at index %d\n", j);
+                    this.array[j] = -1;
+                    duplicateFound = true;
+                }
+            }
+            if(!duplicateFound)
+                System.out.printf("There is no duplicate of number %d\n", this.array[i]);
+        }
     }
 }
